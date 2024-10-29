@@ -1,3 +1,4 @@
+import argparse
 from datetime import datetime
 import shutil
 import sys
@@ -34,16 +35,22 @@ def walk_repo(outfile: str, workdir: str):
           logger.info(f"An error occurred while reading the file {file_path}, skipping...")
 
 
-def run(repo_url: str):
-  workdir = './tmp'
+def format_outfile(repo_url: str) -> str:
   timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-  outfile = f'./out/{repo_url.split("/")[-1].split(".")[0]}-{timestamp}.txt'
+  name = "-".join(repo_url.split("/")[-2:]).split(".")[0]
+  return f'./out/{name}-{timestamp}.txt'
+
+
+def run(repo_url: str, extensions: str):
+  workdir = './tmp'
   clone(repo_url, workdir)
-  walk_repo(outfile, workdir)
+  walk_repo(format_outfile(repo_url), workdir)
   shutil.rmtree(workdir)
 
 
 if __name__ == '__main__':
-  repo_url = sys.argv[1]
-  flags = sys.argv[2:]
-  run(repo_url, flags)
+  parser = argparse.ArgumentParser(description="Clone a Git repo and process its contents.")
+  parser.add_argument('repo_url', type=str, help='The URL of the repository to clone')
+  parser.add_argument('--extensions', '-e', type=str, default='', help='Comma separated extensions to include in final output')
+  args = parser.parse_args()
+  run(args.repo_url, args.extensions)
