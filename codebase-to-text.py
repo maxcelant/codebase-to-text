@@ -21,13 +21,15 @@ def clone(repo_url: str, workdir: str):
     logger.error(f"An error occurred while cloning the repository: {e}")
 
 
-def walk_repo(outfile: str, workdir: str, extensions: list[str] | None):
+def walk_repo(outfile: str, workdir: str, args):
+  extensions = args.extensions.split(",")
   with open(outfile, 'w+') as f:
     for root, _, files in os.walk(workdir):
       for name in files:
         if extensions and not any(name.endswith(ext) for ext in extensions): continue
-        logger.info(f'File {name} included')
         file_path = os.path.join(root, name)
+        if args.subdir and not file_path.startswith(f'./tmp/{args.subdir}'): continue
+        logger.info(f'File {file_path} included')
         try:
           with open(file_path, 'r') as file_content:
             f.write(f"\n\n--- {file_path} ---\n\n")
@@ -42,10 +44,14 @@ def format_outfile(repo_url: str) -> str:
   return f'./out/{name}-{timestamp}.txt'
 
 
-def run(repo_url: str, extensions: str | None):
+def run(args):
   workdir = './tmp'
-  clone(repo_url, workdir)
-  walk_repo(format_outfile(repo_url), workdir, extensions.split(","))
+  clone(args.repo_url, workdir)
+  walk_repo(
+    outfile=format_outfile(args.repo_url), 
+    workdir=workdir, 
+    args=args
+  )
   shutil.rmtree(workdir)
 
 
@@ -53,5 +59,5 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser(description="Clone a Git repo and process its contents.")
   parser.add_argument('repo_url', type=str, help='The URL of the repository to clone')
   parser.add_argument('--extensions', '-e', type=str, default='', help='Comma separated extensions to include in final output')
-  args = parser.parse_args()
-  run(args.repo_url, args.extensions)
+  parser.add_argument('--subdir', '-s', type=str, default='', help='Choose a subdirectory to copy from the repo')
+  run(parser.parse_args())
