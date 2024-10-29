@@ -1,8 +1,6 @@
 import argparse
 from datetime import datetime
 import shutil
-import sys
-import time
 import git
 import os
 import logging
@@ -20,7 +18,7 @@ def clone(repo_url: str, workdir: str):
     git.Repo.clone_from(repo_url, workdir)
     logger.info(f"Repository cloned to {workdir}")
   except Exception as e:
-    logger.info(f"An error occurred while cloning the repository: {e}")
+    logger.error(f"An error occurred while cloning the repository: {e}")
 
 
 def walk_repo(outfile: str, workdir: str, extensions: list[str] | None):
@@ -35,7 +33,7 @@ def walk_repo(outfile: str, workdir: str, extensions: list[str] | None):
             f.write(f"\n\n--- {file_path} ---\n\n")
             f.write(file_content.read())
         except Exception as e:
-          logger.info(f"An error occurred while reading the file {file_path}, skipping...")
+          logger.error(f"An error occurred while reading the file {file_path}, skipping...")
 
 
 def format_outfile(repo_url: str) -> str:
