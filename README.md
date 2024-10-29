@@ -59,7 +59,3 @@ python3 codebase-to-text.py https://github.com/opencontainers/runc.git
 ### Output
 
 The tool creates an output file in the `out/` directory named `<repo-owner-repo-name>-<timestamp>.txt`, containing the concatenated file contents.
-
----
-
-This is a simplified overview focusing on key information to get users started quickly.
