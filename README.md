@@ -1,7 +1,3 @@
-Here’s a more concise and minimal version of the `README.md`:
-
----
-
 # Codebase to Text
 
 `Codebase-to-Text` is a Python utility that clones a Git repository and extracts the contents of all files into a single text file. This is useful for feeding into an LLM or similar use cases.
