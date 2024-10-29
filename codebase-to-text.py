@@ -38,17 +38,17 @@ def walk_repo(outfile: str, workdir: str, args):
           logger.error(f"An error occurred while reading the file {file_path}, skipping...")
 
 
-def format_outfile(repo_url: str) -> str:
+def format_outfile(repo_url: str, outdir: str) -> str:
   timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
   name = "-".join(repo_url.split("/")[-2:]).split(".")[0]
-  return f'./out/{name}-{timestamp}.txt'
+  return f'./{outdir}/{name}-{timestamp}.txt'
 
 
 def run(args):
   workdir = './tmp'
   clone(args.repo_url, workdir)
   walk_repo(
-    outfile=format_outfile(args.repo_url), 
+    outfile=format_outfile(args.repo_url, args.outdir), 
     workdir=workdir, 
     args=args
   )
@@ -60,4 +60,5 @@ if __name__ == '__main__':
   parser.add_argument('repo_url', type=str, help='The URL of the repository to clone')
   parser.add_argument('--extensions', '-e', type=str, default='', help='Comma separated extensions to include in final output')
   parser.add_argument('--subdir', '-s', type=str, default='', help='Choose a subdirectory to copy from the repo')
+  parser.add_argument('--outdir', '-o', type=str, default='out', help='Choose where the output contents shall be placed')
   run(parser.parse_args())
