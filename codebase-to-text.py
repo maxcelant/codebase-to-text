@@ -2,6 +2,7 @@ import argparse
 from datetime import datetime
 import shutil
 import sys
+import time
 import git
 import os
 import logging
@@ -22,10 +23,12 @@ def clone(repo_url: str, workdir: str):
     logger.info(f"An error occurred while cloning the repository: {e}")
 
 
-def walk_repo(outfile: str, workdir: str):
+def walk_repo(outfile: str, workdir: str, extensions: list[str] | None):
   with open(outfile, 'w+') as f:
     for root, _, files in os.walk(workdir):
       for name in files:
+        if extensions and not any(name.endswith(ext) for ext in extensions): continue
+        logger.info(f'File {name} included')
         file_path = os.path.join(root, name)
         try:
           with open(file_path, 'r') as file_content:
@@ -41,10 +44,10 @@ def format_outfile(repo_url: str) -> str:
   return f'./out/{name}-{timestamp}.txt'
 
 
-def run(repo_url: str, extensions: str):
+def run(repo_url: str, extensions: str | None):
   workdir = './tmp'
   clone(repo_url, workdir)
-  walk_repo(format_outfile(repo_url), workdir)
+  walk_repo(format_outfile(repo_url), workdir, extensions.split(","))
   shutil.rmtree(workdir)
 
 
