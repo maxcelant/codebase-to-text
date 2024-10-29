@@ -1,6 +1,6 @@
 # Codebase to Text
 
-`Codebase-to-Text` is a Python utility that clones a Git repository and extracts the contents of all files within the repository into a single text file. This tool helps in generating a consolidated view of the entire codebase for quick reference or analysis.
+`Codebase-to-Text` is a Python utility that clones a Git repository and extracts the contents of all files within the repository into a single text file. This is helpful for plugging into a LLM.
 
 ## Features
 
